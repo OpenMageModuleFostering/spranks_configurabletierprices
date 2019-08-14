@@ -2,21 +2,36 @@
 <config>
     <modules>
         <Spranks_ConfigurableTierPrices>
-            <version>1.0.1</version>
+            <version>2.0.0</version>
         </Spranks_ConfigurableTierPrices>
     </modules>
     <global>
         <models>
-            <catalog>
-                <rewrite>
-                    <product_type_configurable_price>Spranks_ConfigurableTierPrices_Model_Product_Type_Configurable_Price</product_type_configurable_price>
-                </rewrite>
-            </catalog>
+            <spranks_configurabletierprices>
+                <class>Spranks_ConfigurableTierPrices_Model</class>
+            </spranks_configurabletierprices>
         </models>
         <helpers>
             <spranks_configurabletierprices>
                 <class>Spranks_ConfigurableTierPrices_Helper</class>
             </spranks_configurabletierprices>
         </helpers>
+        <events>
+            <catalog_product_get_final_price>
+                <observers>
+                    <spranks_configurabletierprices>
+                        <class>spranks_configurabletierprices/observer</class>
+                        <method>catalogProductGetFinalPrice</method>
+                    </spranks_configurabletierprices>
+                </observers>
+            </catalog_product_get_final_price>
+        </events>
     </global>
+    <phpunit>
+        <suite>
+            <modules>
+                <Spranks_ConfigurableTierPrices/>
+            </modules>
+        </suite>
+    </phpunit>
 </config>

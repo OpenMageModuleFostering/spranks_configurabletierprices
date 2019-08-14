@@ -1,35 +1,32 @@
 <?php
 
-class Spranks_ConfigurableTierPrices_Model_Product_Type_Configurable_Price extends Mage_Catalog_Model_Product_Type_Configurable_Price
+class Spranks_ConfigurableTierPrices_Model_Observer
 {
 
     /**
-     * Get product final price
+     * Applies the tier pricing structure across different variants of configurable products.
      *
-     * @param   double $qty
-     * @param   Mage_Catalog_Model_Product $product
-     * @return  double
+     * @param Varien_Event_Observer $observer
+     *
+     * @return Spranks_ConfigurableTierPrices_Model_Observer
      */
-    public function getFinalPrice($qty = null, $product)
+    public function catalogProductGetFinalPrice(Varien_Event_Observer $observer)
     {
-        $finalPrice = parent::getFinalPrice($qty, $product);
+        $product = $observer->getProduct();
         // do not calculate tier prices based on cart items on product page
         // see https://github.com/sprankhub/Spranks_ConfigurableTierPrices/issues/14
-        if (Mage::registry('current_product')) {
-            return $finalPrice;
+        if (Mage::registry('current_product') || ! $product->isConfigurable()) {
+            return $this;
         }
         // if tier prices are defined, also adapt them to configurable products
-        // example: if a shirt is available in red and black and if you buy 
-        // three or more the price is eight euro, you can also buy one red and 
-        // two black shirts and you will get the tier price of eight euro.
-        // based on https://www.magentocommerce.com/boards/viewthread/10743/
         if ($product->getTierPriceCount() > 0) {
             $tierPrice = $this->_calcConfigProductTierPricing($product);
-            if ($tierPrice < $finalPrice) {
-                $finalPrice = $tierPrice;
+            if ($tierPrice < $product->getData('final_price')) {
+                $product->setData('final_price', $tierPrice);
             }
         }
-        return $finalPrice;
+
+        return $this;
     }
 
     /**
@@ -37,9 +34,10 @@ class Spranks_ConfigurableTierPrices_Model_Product_Type_Configurable_Price exten
      * Uses qty of parent item to determine price.
      *
      * @param   Mage_Catalog_Model_Product $product
+     *
      * @return  float
      */
-    protected function _calcConfigProductTierPricing($product)
+    private function _calcConfigProductTierPricing($product)
     {
         $tierPrice = PHP_INT_MAX;
 
@@ -59,14 +57,20 @@ class Spranks_ConfigurableTierPrices_Model_Product_Type_Configurable_Price exten
             }
             // compute the total quantity of items of the configurable product
             if (array_key_exists($product->getId(), $idQuantities)) {
-                $totalQty = array_sum($idQuantities[$product->getId()]);
-                $tierPrice = parent::getFinalPrice($totalQty, $product);
+                $totalQty  = array_sum($idQuantities[$product->getId()]);
+                $tierPrice = $product->getPriceModel()->getBasePrice($product, $totalQty);
             }
         }
+
         return $tierPrice;
     }
 
-    protected function _getAllVisibleItems()
+    /**
+     * Retrieves all visible quote items from the session.
+     *
+     * @return array with instances of Mage_Sales_Model_Quote_Item
+     */
+    private function _getAllVisibleItems()
     {
         if (Mage::helper('spranks_configurabletierprices/admin')->isAdmin()) {
             return Mage::getSingleton('adminhtml/session_quote')->getQuote()->getAllVisibleItems();
