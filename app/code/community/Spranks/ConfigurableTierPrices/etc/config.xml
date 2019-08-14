@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Spranks_ConfigurableTierPrices>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </Spranks_ConfigurableTierPrices>
     </modules>
     <global>
@@ -11,6 +11,14 @@
                 <class>Spranks_ConfigurableTierPrices_Model</class>
             </spranks_configurabletierprices>
         </models>
+        <resources>
+            <spranks_configurabletierprices_setup>
+                <setup>
+                    <module>Spranks_ConfigurableTierPrices</module>
+                    <class>Mage_Catalog_Model_Resource_Setup</class>
+                </setup>
+            </spranks_configurabletierprices_setup>
+        </resources>
         <helpers>
             <spranks_configurabletierprices>
                 <class>Spranks_ConfigurableTierPrices_Helper</class>
@@ -27,6 +35,25 @@
             </catalog_product_get_final_price>
         </events>
     </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Spranks_ConfigurableTierPrices>
+                    <files>
+                        <default>Spranks_ConfigurableTierPrices.csv</default>
+                    </files>
+                </Spranks_ConfigurableTierPrices>
+            </modules>
+        </translate>
+    </adminhtml>
+    <default>
+        <spranks_configurabletierprices>
+            <general>
+                <is_enabled>1</is_enabled>
+                <disabled_for_category/>
+            </general>
+        </spranks_configurabletierprices>
+    </default>
     <phpunit>
         <suite>
             <modules>

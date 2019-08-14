@@ -13,6 +13,11 @@ class Spranks_ConfigurableTierPrices_Model_Observer
     public function catalogProductGetFinalPrice(Varien_Event_Observer $observer)
     {
         $product = $observer->getProduct();
+        if (!Mage::helper('spranks_configurabletierprices')->isExtensionEnabled()
+            || Mage::helper('spranks_configurabletierprices')->isProductInDisabledCategory($product)
+            || Mage::helper('spranks_configurabletierprices')->isExtensionDisabledForProduct($product)) {
+            return $this;
+        }
         // do not calculate tier prices based on cart items on product page
         // see https://github.com/sprankhub/Spranks_ConfigurableTierPrices/issues/14
         if (Mage::registry('current_product') || ! $product->isConfigurable()) {
@@ -72,7 +77,7 @@ class Spranks_ConfigurableTierPrices_Model_Observer
      */
     private function _getAllVisibleItems()
     {
-        if (Mage::helper('spranks_configurabletierprices/admin')->isAdmin()) {
+        if (Mage::helper('spranks_configurabletierprices')->isAdmin()) {
             return Mage::getSingleton('adminhtml/session_quote')->getQuote()->getAllVisibleItems();
         } else {
             return Mage::getSingleton('checkout/session')->getQuote()->getAllVisibleItems();
