@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Spranks_ConfigurableTierPrices",
+    "name": "OpenMageModuleFostering\/Spranks_ConfigurableTierPrices",
     "type": "magento-module",
     "license": "OSL-3.0",
     "homepage": "",
     "description": "This module changes the way Magento calculates tier prices of configurable products.",
     "authors": [
-    {
-        "name": "Simon Sprankel",
-        "email": "simonsprankel@gmail.com"
-    }
-],
+        {
+            "name": "Simon Sprankel",
+            "email": "simonsprankel@gmail.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
