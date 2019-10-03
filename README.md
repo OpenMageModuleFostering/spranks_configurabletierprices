@@ -1,3 +1,5 @@
+
+
 ## Original Package Description
 
 This module changes the way Magento calculates tier prices of configurable products.
